@@ -1,0 +1,467 @@
+/* ============================================================
+   Rocket Launch Quiz — styles
+   Wordless multiplication game. Color & icons only.
+   ============================================================ */
+
+:root {
+  --space-1: #0b1026;
+  --space-2: #1b2350;
+  --good: #28e07a;
+  --good-dark: #0fa855;
+  --bad: #ff5d6c;
+  --gold: #ffd23f;
+  --locked: #3a4267;
+  --ink: #f4f7ff;
+  --accent: #5ad1ff;
+  --fuel-full: #4ade80;
+  --fuel-low: #ff5d6c;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: var(--space-1);
+  color: var(--ink);
+  font-family: "Baloo 2", "Comic Sans MS", "Trebuchet MS", system-ui, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Starfield behind everything */
+#stars-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+#app {
+  position: relative;
+  z-index: 1;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* ---------- Screen switching ---------- */
+.screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+}
+.screen.active { display: flex; }
+
+/* ---------- Top bar / HUD ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  z-index: 5;
+}
+.topbar.over-canvas {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+}
+
+.icon-btn {
+  font-size: 30px;
+  line-height: 1;
+  background: rgba(255,255,255,0.08);
+  border: 2px solid rgba(255,255,255,0.18);
+  border-radius: 16px;
+  padding: 8px 12px;
+  cursor: pointer;
+  color: var(--ink);
+  transition: transform .12s ease, background .12s ease;
+}
+.icon-btn:hover { background: rgba(255,255,255,0.18); }
+.icon-btn:active { transform: scale(0.9); }
+.icon-btn.big { font-size: 46px; padding: 14px 20px; }
+
+.coin-counter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 28px;
+  font-weight: 800;
+  background: rgba(255, 210, 63, 0.15);
+  border: 2px solid rgba(255, 210, 63, 0.4);
+  border-radius: 16px;
+  padding: 6px 14px;
+  margin-left: auto;
+}
+.coin-icon { font-size: 26px; }
+.coin-icon.big { font-size: 40px; }
+.coin-bump { animation: coinBump .4s ease; }
+
+/* ============================================================
+   MISSION MAP
+   ============================================================ */
+#planet-trail {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column-reverse; /* planet 1 at bottom, climb upward */
+  align-items: center;
+  gap: 28px;
+  padding: 40px 0 60px;
+  scroll-behavior: smooth;
+}
+
+.planet-node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform .15s ease;
+}
+.planet-node:hover { transform: scale(1.06); }
+.planet-node.locked { cursor: not-allowed; filter: grayscale(0.9) brightness(0.5); }
+.planet-node.locked:hover { transform: none; }
+
+/* Offset planets left/right to make a winding trail */
+.planet-node:nth-child(odd)  { margin-left: 120px; }
+.planet-node:nth-child(even) { margin-right: 120px; }
+
+.planet-emoji {
+  font-size: 84px;
+  line-height: 1;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,0.5));
+}
+.planet-node.current .planet-emoji {
+  animation: floaty 3s ease-in-out infinite;
+}
+
+.planet-table {
+  margin-top: -6px;
+  font-size: 30px;
+  font-weight: 900;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+}
+.planet-table .x { color: var(--accent); }
+
+.planet-stars {
+  display: flex;
+  gap: 2px;
+  font-size: 22px;
+  margin-top: 2px;
+}
+.planet-stars .on { color: var(--gold); }
+.planet-stars .off { color: var(--locked); }
+
+.planet-lock {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -60%);
+  font-size: 40px;
+}
+
+#reset-zone {
+  position: fixed;
+  bottom: 0; left: 0;
+  width: 70px; height: 70px;
+  z-index: 20;
+}
+
+/* ============================================================
+   MISSION / GAMEPLAY
+   ============================================================ */
+#game-canvas, #confetti-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.over-canvas { z-index: 5; }
+
+/* Fuel bar */
+.fuel-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.fuel-icon { font-size: 24px; }
+/* When the timer is switched off (press T), dim the gauge to show it's idle */
+.fuel-wrap.timer-off { opacity: 0.3; }
+.fuel-track {
+  width: 180px;
+  height: 22px;
+  background: rgba(0,0,0,0.4);
+  border: 2px solid rgba(255,255,255,0.25);
+  border-radius: 12px;
+  overflow: hidden;
+}
+#fuel-fill {
+  height: 100%;
+  width: 100%;
+  background: var(--fuel-full);
+  border-radius: 10px;
+  transition: width .1s linear, background .3s ease;
+}
+
+/* Flight progress dots */
+.progress-dots {
+  position: absolute;
+  top: 64px; left: 0; right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+.progress-dots .dot {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  border: 2px solid rgba(255,255,255,0.35);
+  transition: transform .2s ease, background .2s ease;
+}
+.progress-dots .dot.done {
+  background: var(--good);
+  border-color: var(--good);
+  transform: scale(1.2);
+}
+.progress-dots .dot.goal { background: transparent; border: none; font-size: 18px; }
+.progress-dots .dot.goal::after { content: "🪐"; }
+
+/* Combo badge */
+.combo-badge {
+  position: absolute;
+  top: 100px; right: 22px;
+  font-size: 30px;
+  font-weight: 900;
+  color: var(--gold);
+  opacity: 0;
+  transform: scale(0.5);
+}
+.combo-badge.show {
+  animation: comboPop .5s ease;
+}
+
+/* Equation */
+.equation {
+  position: absolute;
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-size: clamp(48px, 11vw, 110px);
+  font-weight: 900;
+  text-shadow: 0 4px 0 rgba(0,0,0,0.35), 0 0 30px rgba(90,209,255,0.3);
+}
+.eq-op { color: var(--accent); }
+.eq-num { color: var(--ink); }
+
+.eq-answer {
+  display: inline-flex;
+  align-items: center;
+  min-width: 1.6em;
+  height: 1.3em;
+  padding: 0 14px;
+  background: rgba(255,255,255,0.08);
+  border: 4px dashed rgba(255,255,255,0.35);
+  border-radius: 18px;
+  color: var(--gold);
+  justify-content: center;
+}
+.eq-answer.correct {
+  background: rgba(40, 224, 122, 0.25);
+  border-color: var(--good);
+  border-style: solid;
+  color: var(--good);
+  animation: pop .4s ease;
+}
+.eq-answer.wrong {
+  background: rgba(255, 93, 108, 0.2);
+  border-color: var(--bad);
+  border-style: solid;
+  color: var(--bad);
+  animation: shake .45s ease;
+}
+.caret {
+  width: 4px;
+  height: 1em;
+  background: var(--gold);
+  margin-left: 4px;
+  animation: blink 1s steps(2) infinite;
+}
+.eq-answer.correct .caret,
+.eq-answer.wrong .caret { display: none; }
+
+/* Launch button */
+.launch-btn {
+  position: absolute;
+  bottom: 36px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 52px;
+  background: linear-gradient(180deg, #ff8a3d, #ff5d2e);
+  border: none;
+  border-radius: 50%;
+  width: 96px; height: 96px;
+  cursor: pointer;
+  box-shadow: 0 8px 0 #b83c14, 0 12px 22px rgba(0,0,0,0.5);
+  transition: transform .08s ease, box-shadow .08s ease;
+}
+.launch-btn:active {
+  transform: translateX(-50%) translateY(6px);
+  box-shadow: 0 2px 0 #b83c14, 0 6px 12px rgba(0,0,0,0.5);
+}
+
+/* Screen shake on correct */
+#screen-mission.shake { animation: screenShake .3s ease; }
+
+/* ============================================================
+   REWARD
+   ============================================================ */
+#screen-reward {
+  align-items: center;
+  justify-content: center;
+}
+.reward-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 40px 60px;
+  background: rgba(27, 35, 80, 0.85);
+  border: 4px solid var(--gold);
+  border-radius: 32px;
+  box-shadow: 0 0 60px rgba(255, 210, 63, 0.4);
+}
+.reward-stars {
+  display: flex;
+  gap: 16px;
+  font-size: 80px;
+}
+.reward-stars .rstar {
+  color: var(--locked);
+  transform: scale(0.3);
+  opacity: 0;
+}
+.reward-stars .rstar.on {
+  color: var(--gold);
+  text-shadow: 0 0 24px var(--gold);
+  animation: starPop .5s ease forwards;
+}
+.reward-sticker {
+  font-size: 100px;
+  transform: scale(0);
+  animation: stickerDrop .6s cubic-bezier(.2,1.4,.4,1) .4s forwards;
+}
+.reward-coins {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 44px;
+  font-weight: 900;
+  color: var(--gold);
+}
+.reward-buttons { display: flex; gap: 28px; margin-top: 8px; }
+
+/* ============================================================
+   HANGAR
+   ============================================================ */
+.hangar-body {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 20px;
+}
+.hangar-preview {
+  font-size: 120px;
+  line-height: 1;
+  animation: floaty 3s ease-in-out infinite;
+  filter: drop-shadow(0 8px 14px rgba(0,0,0,0.5));
+}
+.skin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 110px);
+  gap: 16px;
+  justify-content: center;
+  max-width: 640px;
+}
+.skin-cell {
+  position: relative;
+  width: 110px; height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+  background: rgba(255,255,255,0.06);
+  border: 3px solid rgba(255,255,255,0.18);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: transform .12s ease, border-color .12s ease;
+}
+.skin-cell:hover { transform: scale(1.05); }
+.skin-cell.equipped { border-color: var(--good); box-shadow: 0 0 18px var(--good); }
+.skin-cell.locked { filter: grayscale(0.6) brightness(0.6); }
+.skin-cell .price {
+  position: absolute;
+  bottom: -2px; right: -2px;
+  font-size: 16px;
+  font-weight: 800;
+  background: var(--gold);
+  color: #3a2c00;
+  border-radius: 10px;
+  padding: 1px 7px;
+}
+.skin-cell.too-expensive { animation: shake .4s ease; }
+
+.sticker-shelf {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  max-width: 640px;
+  padding: 14px;
+  border-top: 2px dashed rgba(255,255,255,0.2);
+}
+.sticker-shelf .sticker { font-size: 40px; }
+.sticker-shelf .sticker.empty { opacity: 0.2; }
+
+/* ============================================================
+   KEYFRAMES
+   ============================================================ */
+@keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
+@keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+@keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.25); } 100% { transform: scale(1); } }
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20% { transform: translateX(-12px); }
+  40% { transform: translateX(12px); }
+  60% { transform: translateX(-8px); }
+  80% { transform: translateX(8px); }
+}
+@keyframes screenShake {
+  0%,100% { transform: translate(0,0); }
+  25% { transform: translate(-6px, 4px); }
+  50% { transform: translate(6px, -4px); }
+  75% { transform: translate(-4px, -3px); }
+}
+@keyframes comboPop {
+  0% { opacity: 0; transform: scale(0.5) translateY(10px); }
+  40% { opacity: 1; transform: scale(1.3) translateY(0); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes starPop {
+  0% { transform: scale(0.3) rotate(-30deg); opacity: 0; }
+  60% { transform: scale(1.3) rotate(8deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+@keyframes stickerDrop {
+  0% { transform: scale(0) rotate(-40deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+@keyframes coinBump {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); color: var(--gold); }
+  100% { transform: scale(1); }
+}

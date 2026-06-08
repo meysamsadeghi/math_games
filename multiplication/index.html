@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🚀 × ?</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Starfield canvas sits behind everything -->
+  <canvas id="stars-bg"></canvas>
+
+  <div id="app">
+
+    <!-- ===================== MISSION MAP ===================== -->
+    <section id="screen-map" class="screen active">
+      <!-- HUD: coins + hangar button -->
+      <header class="topbar">
+        <div class="coin-counter"><span class="coin-icon">🪙</span><span id="map-coins">0</span></div>
+        <button id="btn-hangar" class="icon-btn" aria-label="hangar">🛠️</button>
+      </header>
+
+      <!-- Planet trail injected by JS -->
+      <div id="planet-trail"></div>
+
+      <!-- Hidden long-press reset zone -->
+      <div id="reset-zone" title=""></div>
+    </section>
+
+    <!-- ===================== MISSION (GAMEPLAY) ===================== -->
+    <section id="screen-mission" class="screen">
+      <canvas id="game-canvas"></canvas>
+
+      <!-- HUD overlay -->
+      <header class="topbar over-canvas">
+        <button id="btn-back" class="icon-btn" aria-label="back">🏠</button>
+        <div class="fuel-wrap" aria-label="fuel">
+          <span class="fuel-icon">⛽</span>
+          <div class="fuel-track"><div id="fuel-fill"></div></div>
+        </div>
+        <div class="coin-counter"><span class="coin-icon">🪙</span><span id="mission-coins">0</span></div>
+        <button id="btn-mute" class="icon-btn" aria-label="mute">🔊</button>
+      </header>
+
+      <!-- Flight progress dots -->
+      <div id="progress-dots" class="progress-dots over-canvas"></div>
+
+      <!-- Combo flame -->
+      <div id="combo-badge" class="combo-badge over-canvas"></div>
+
+      <!-- Equation -->
+      <div id="equation" class="equation over-canvas">
+        <span id="eq-a" class="eq-num"></span>
+        <span class="eq-op">×</span>
+        <span id="eq-b" class="eq-num"></span>
+        <span class="eq-op">=</span>
+        <span id="eq-answer" class="eq-answer"><span id="answer-text"></span><span class="caret"></span></span>
+      </div>
+
+      <!-- Launch button (mouse fallback for Enter) -->
+      <button id="btn-launch" class="launch-btn over-canvas" aria-label="launch">🚀</button>
+    </section>
+
+    <!-- ===================== REWARD ===================== -->
+    <section id="screen-reward" class="screen">
+      <canvas id="confetti-canvas"></canvas>
+      <div class="reward-card over-canvas">
+        <div id="reward-stars" class="reward-stars">
+          <span class="rstar" data-i="0">★</span>
+          <span class="rstar" data-i="1">★</span>
+          <span class="rstar" data-i="2">★</span>
+        </div>
+        <div id="reward-sticker" class="reward-sticker"></div>
+        <div class="reward-coins"><span class="coin-icon big">🪙</span><span id="reward-coin-amt">+0</span></div>
+        <div class="reward-buttons">
+          <button id="btn-reward-home" class="icon-btn big" aria-label="home">🏠</button>
+          <button id="btn-reward-next" class="icon-btn big" aria-label="next">▶️</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== HANGAR ===================== -->
+    <section id="screen-hangar" class="screen">
+      <header class="topbar">
+        <button id="btn-hangar-back" class="icon-btn" aria-label="back">🏠</button>
+        <div class="coin-counter"><span class="coin-icon">🪙</span><span id="hangar-coins">0</span></div>
+      </header>
+
+      <div class="hangar-body">
+        <!-- Big preview of equipped rocket -->
+        <div id="hangar-preview" class="hangar-preview"></div>
+        <!-- Skin grid injected by JS -->
+        <div id="skin-grid" class="skin-grid"></div>
+        <!-- Sticker collection -->
+        <div id="sticker-shelf" class="sticker-shelf"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
