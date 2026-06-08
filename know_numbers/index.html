@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🔢 Count With Me</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Soft sky/starfield behind everything -->
+  <canvas id="stars-bg"></canvas>
+  <!-- Celebration confetti layer -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <div id="app">
+
+    <!-- ===================== PLAY SCREEN ===================== -->
+    <section id="screen-play" class="screen active">
+      <header class="topbar">
+        <div class="star-counter"><span class="star-icon">⭐</span><span id="star-count">0</span></div>
+
+        <!-- Difficulty level (grown-up control): tap to cycle the count band; it sticks -->
+        <button id="btn-level" class="level-pill" aria-label="level">
+          <span class="level-icon">🎚️</span><span id="level-label">1–10</span>
+        </button>
+
+        <!-- Progress toward next friend -->
+        <div class="friend-wrap" aria-label="next friend">
+          <div class="friend-track"><div id="friend-fill"></div></div>
+          <span id="next-friend" class="next-friend">🎁</span>
+        </div>
+
+        <button id="btn-mute" class="icon-btn" aria-label="mute">🔊</button>
+        <button id="btn-book" class="icon-btn" aria-label="collection">📖</button>
+      </header>
+
+      <!-- Objects to count -->
+      <div id="object-tray" class="object-tray"></div>
+
+      <!-- Four answer boxes -->
+      <div id="answer-boxes" class="answer-boxes"></div>
+
+      <!-- Hidden long-press reset zone -->
+      <div id="reset-zone" title=""></div>
+    </section>
+
+    <!-- ===================== COLLECTION / STICKER BOOK ===================== -->
+    <section id="screen-book" class="screen">
+      <header class="topbar">
+        <button id="btn-book-back" class="icon-btn" aria-label="back">🏠</button>
+        <div class="star-counter"><span class="star-icon">⭐</span><span id="book-star-count">0</span></div>
+      </header>
+      <div id="friend-grid" class="friend-grid"></div>
+    </section>
+
+  </div>
+
+  <!-- New-friend celebration popup -->
+  <div id="friend-popup"><div id="popup-friend" class="pop-friend"></div></div>
+
+  <script src="game.js"></script>
+</body>
+</html>
