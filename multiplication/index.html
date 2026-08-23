@@ -59,8 +59,8 @@
 
       <!-- Invisible proxy input: brings up the mobile number keyboard.
            Kept focused during missions; real answer is mirrored into #answer-text above. -->
-      <input id="answer-input" class="answer-input" type="tel" inputmode="numeric" pattern="[0-9]*"
-             autocomplete="off" autocorrect="off" spellcheck="false" maxlength="3"
+      <input id="answer-input" class="answer-input" type="text" inputmode="numeric" pattern="[0-9]*"
+             autocomplete="one-time-code" autocorrect="off" spellcheck="false" maxlength="3"
              aria-hidden="true" tabindex="-1" />
 
       <!-- Launch button (mouse fallback for Enter) -->
