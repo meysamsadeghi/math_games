@@ -76,6 +76,13 @@
     hangar: $("screen-hangar")
   };
 
+  // Invisible input used purely to summon the mobile keyboard; mission.buffer
+  // stays the source of truth and is mirrored to/from this field's value.
+  var answerInput = $("answer-input");
+  function focusAnswerInput() {
+    if (document.activeElement !== answerInput) answerInput.focus({ preventScroll: true });
+  }
+
   function showScreen(name) {
     for (var k in screens) screens[k].classList.toggle("active", k === name);
     if (name === "mission") { resizeGameCanvas(); }
@@ -275,6 +282,7 @@
     audio(); // unlock audio on the click that got us here
     askQuestion(true);
     startGameLoop();
+    focusAnswerInput(); // opens the mobile number keyboard
   }
 
   function buildProgressDots() {
@@ -309,6 +317,7 @@
 
   function renderBuffer() {
     $("answer-text").textContent = mission.buffer;
+    if (answerInput.value !== mission.buffer) answerInput.value = mission.buffer;
   }
 
   function submitAnswer() {
@@ -654,14 +663,21 @@
     if (!screens.mission.classList.contains("active")) return;
     if (mission == null || mission.locked) return;
 
-    if (e.key >= "0" && e.key <= "9") {
-      if (mission.buffer.length < 3) { mission.buffer += e.key; renderBuffer(); sfx.type(); }
-      e.preventDefault();
-    } else if (e.key === "Backspace") {
-      mission.buffer = mission.buffer.slice(0, -1); renderBuffer(); e.preventDefault();
-    } else if (e.key === "Enter") {
+    // Digits/backspace are handled via the answer-input's "input" event below
+    // (works for both physical and on-screen mobile keyboards). Only Enter
+    // needs handling here since it doesn't always reach the input as text.
+    if (e.key === "Enter") {
       submitAnswer(); e.preventDefault();
     }
+  });
+
+  // Source of truth for typed digits: mirrors the invisible answer-input's
+  // value into mission.buffer, so it works with real and virtual keyboards.
+  answerInput.addEventListener("input", function () {
+    if (mission == null || mission.locked) { answerInput.value = mission ? mission.buffer : ""; return; }
+    var digits = answerInput.value.replace(/\D/g, "").slice(0, 3);
+    if (digits !== mission.buffer) { mission.buffer = digits; renderBuffer(); sfx.type(); }
+    else if (answerInput.value !== digits) { answerInput.value = digits; }
   });
 
   // Press T anywhere to toggle the fuel-bar timer on/off (parent control).
@@ -675,7 +691,7 @@
     }
   });
 
-  $("btn-launch").addEventListener("click", function () { submitAnswer(); });
+  $("btn-launch").addEventListener("click", function () { submitAnswer(); focusAnswerInput(); });
 
   // -------------------- Button wiring --------------------
   $("btn-hangar").addEventListener("click", function () { sfx.type(); buildHangar(); showScreen("hangar"); });

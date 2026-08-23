@@ -292,6 +292,26 @@ html, body {
 .eq-answer.correct .caret,
 .eq-answer.wrong .caret { display: none; }
 
+/* Invisible proxy input that summons the mobile number keyboard.
+   Must stay rendered (not display:none/visibility:hidden) and >=16px
+   font to avoid iOS auto-zoom, but is visually and interactively invisible. */
+.answer-input {
+  position: absolute;
+  top: 0; left: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: transparent;
+  caret-color: transparent;
+  font-size: 16px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
 /* Launch button */
 .launch-btn {
   position: absolute;

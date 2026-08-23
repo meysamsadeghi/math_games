@@ -57,6 +57,12 @@
         <span id="eq-answer" class="eq-answer"><span id="answer-text"></span><span class="caret"></span></span>
       </div>
 
+      <!-- Invisible proxy input: brings up the mobile number keyboard.
+           Kept focused during missions; real answer is mirrored into #answer-text above. -->
+      <input id="answer-input" class="answer-input" type="tel" inputmode="numeric" pattern="[0-9]*"
+             autocomplete="off" autocorrect="off" spellcheck="false" maxlength="3"
+             aria-hidden="true" tabindex="-1" />
+
       <!-- Launch button (mouse fallback for Enter) -->
       <button id="btn-launch" class="launch-btn over-canvas" aria-label="launch">🚀</button>
     </section>
