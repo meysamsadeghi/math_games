@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🧪 Percent Potion Lab</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Bubbling lab canvas sits behind everything -->
+  <canvas id="bubbles-bg"></canvas>
+  <!-- Celebration confetti layer -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <div id="app">
+
+    <!-- ===================== LAB SHELVES (LEVEL MAP) ===================== -->
+    <section id="screen-map" class="screen active">
+      <header class="topbar">
+        <div class="star-counter"><span class="star-icon">⭐</span><span id="map-stars">0</span></div>
+        <button id="btn-book" class="icon-btn" aria-label="collection">📖</button>
+      </header>
+
+      <!-- Level stops injected by JS -->
+      <div id="path-trail"></div>
+
+      <!-- Hidden long-press reset zone -->
+      <div id="reset-zone" title=""></div>
+    </section>
+
+    <!-- ===================== MISSION (GAMEPLAY) ===================== -->
+    <section id="screen-mission" class="screen">
+      <header class="topbar">
+        <button id="btn-back" class="icon-btn" aria-label="back">🏠</button>
+        <button id="btn-lesson" class="icon-btn" aria-label="lesson">💡</button>
+        <div class="star-counter"><span class="star-icon">⭐</span><span id="mission-stars">0</span></div>
+        <button id="btn-mute" class="icon-btn" aria-label="mute">🔊</button>
+      </header>
+
+      <!-- Steps-to-complete-level progress dots -->
+      <div id="progress-dots" class="progress-dots"></div>
+
+      <!-- Combo flame -->
+      <div id="combo-badge" class="combo-badge"></div>
+
+      <div id="prompt" class="prompt"></div>
+
+      <!-- Question visual (grid, bottle, items, fraction, bar...) built by JS -->
+      <div id="stage" class="stage"></div>
+
+      <div id="hint" class="hint"></div>
+
+      <!-- Four answer boxes (click, or type on keyboard) -->
+      <div id="answer-boxes" class="answer-boxes"></div>
+
+      <!-- Paint levels: live readout + check button -->
+      <div id="paint-controls" class="paint-controls">
+        <div id="paint-readout" class="paint-readout">0%</div>
+        <button id="btn-check" class="check-btn" aria-label="check">✔</button>
+      </div>
+    </section>
+
+    <!-- ===================== REWARD ===================== -->
+    <section id="screen-reward" class="screen">
+      <div class="reward-card">
+        <div id="reward-stars" class="reward-stars">
+          <span class="rstar" data-i="0">★</span>
+          <span class="rstar" data-i="1">★</span>
+          <span class="rstar" data-i="2">★</span>
+        </div>
+        <div id="reward-critter" class="reward-critter"></div>
+        <div class="reward-buttons">
+          <button id="btn-reward-home" class="icon-btn big" aria-label="home">🏠</button>
+          <button id="btn-reward-next" class="icon-btn big" aria-label="next">▶️</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== LAB BOOK (COLLECTION) ===================== -->
+    <section id="screen-book" class="screen">
+      <header class="topbar">
+        <button id="btn-book-back" class="icon-btn" aria-label="back">🏠</button>
+        <div class="star-counter"><span class="star-icon">⭐</span><span id="book-stars">0</span></div>
+      </header>
+      <div id="critter-grid" class="critter-grid"></div>
+    </section>
+
+    <!-- ===================== LESSON CARD (OVERLAY) ===================== -->
+    <div id="lesson" class="lesson-overlay">
+      <div class="lesson-card">
+        <div class="lesson-head">
+          <span id="lesson-icon" class="lesson-icon"></span>
+          <span id="lesson-title" class="lesson-title"></span>
+        </div>
+        <div id="lesson-visual" class="lesson-visual"></div>
+        <div id="lesson-text" class="lesson-text"></div>
+        <button id="btn-lesson-go" class="go-btn">Let's go! ▶</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

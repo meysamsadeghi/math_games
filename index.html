@@ -222,6 +222,7 @@
     .card--rocket .play-btn { background: linear-gradient(135deg, #6366f1, #ec4899); }
     .card--count  .play-btn { background: linear-gradient(135deg, #10b981, #06b6d4); }
     .card--garden .play-btn { background: linear-gradient(135deg, #22c55e, #f59e0b); }
+    .card--lab    .play-btn { background: linear-gradient(135deg, #14b8a6, #8b5cf6); }
 
     .footer {
       margin-top: clamp(34px, 6vh, 56px);
@@ -280,6 +281,17 @@
         </div>
         <span class="play-btn">Play ▶</span>
       </a>
+
+      <a class="card card--lab" href="./percentage/index.html">
+        <span class="card-emoji">🧪</span>
+        <div class="card-title">Percent Potion Lab</div>
+        <div class="card-desc">Learn what percent means, from coloring 100 boxes to working out sale prices!</div>
+        <div class="card-tags">
+          <span class="tag">💯 Percentages</span>
+          <span class="tag">Ages 8–12</span>
+        </div>
+        <span class="play-btn">Play ▶</span>
+      </a>
     </div>
   </main>
 
@@ -290,7 +302,7 @@
     (function () {
       const layer = document.getElementById('floaties');
       if (!layer || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      const symbols = ['➕','➖','✖️','➗','🟰','1','2','3','4','5','7','9','⭐','🌟','🪐','🚀','🔢','🦄','🎈','🍭','🌈','✨'];
+      const symbols = ['➕','➖','✖️','➗','🟰','1','2','3','4','5','7','9','⭐','🌟','🪐','🚀','🔢','🦄','💯','🧪','🎈','🍭','🌈','✨'];
       const COUNT = window.innerWidth < 600 ? 14 : 24;
       for (let i = 0; i < COUNT; i++) {
         const s = document.createElement('span');
